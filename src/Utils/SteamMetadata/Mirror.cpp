@@ -9,14 +9,12 @@
 namespace Mirror {
 
 namespace {
-    // Delivery mirror chain for the `updates` branch of madoiscool/BetterSteamTools.
-    // Independent hosts (not just CDN copies of one repo), tried in order until one
-    // returns HTTP 200. github-raw first for pointer freshness; jsDelivr and lua.tools
-    // cover regions where raw.githubusercontent is throttled/blocked.
+    // Only fetch DLL updates from this fork, never from upstream: upstream builds
+    // would overwrite fork-specific changes. Try GitHub raw first for pointer
+    // freshness, then the jsDelivr copy of the same fork.
     constexpr const char* kBaseTemplates[] = {
-        "https://raw.githubusercontent.com/madoiscool/BetterSteamTools/updates/{path}",
-        "https://cdn.jsdelivr.net/gh/madoiscool/BetterSteamTools@updates/{path}",
-        "https://git.lua.tools/luatools/BetterSteamTools/raw/branch/updates/{path}",
+        "https://raw.githubusercontent.com/piqseu/BetterSteamTools/updates/{path}",
+        "https://cdn.jsdelivr.net/gh/piqseu/BetterSteamTools@updates/{path}",
     };
 
     std::string Expand(std::string tmpl, std::string_view relPath)

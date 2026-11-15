@@ -5,9 +5,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Release version (e.g. v1.0.0)"
+        description: "Release version (e.g. 1.2.0)"
         required: true
-        default: ""
+        default: "1.2.0"
 
 permissions:
   contents: write
@@ -26,8 +26,8 @@ jobs:
         run: cmake --build build --config Release
 
       # Publish the built DLL + version pointer to the orphan `updates` branch so the
-      # in-DLL self-updater can fetch it over the mirror chain (raw → jsDelivr →
-      # lua.tools). Pushes to this same repo with the built-in GITHUB_TOKEN.
+      # in-DLL self-updater can fetch it over the fork-only mirror chain
+      # (raw → jsDelivr). Pushes to this same repo with the built-in GITHUB_TOKEN.
       - name: Publish update to updates branch
         shell: pwsh
         run: |
@@ -70,7 +70,7 @@ jobs:
         run: |
           try {
             Invoke-WebRequest -UseBasicParsing `
-              "https://purge.jsdelivr.net/gh/madoiscool/BetterSteamTools@updates/opensteamtool/latest.toml" | Out-Null
+              "https://purge.jsdelivr.net/gh/${{ github.repository }}@updates/opensteamtool/latest.toml" | Out-Null
           } catch { Write-Host "jsDelivr purge failed (non-fatal): $_" }
 
       - name: Build Debug
